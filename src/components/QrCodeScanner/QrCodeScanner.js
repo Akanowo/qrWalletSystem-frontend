@@ -43,9 +43,9 @@ function QrCodeScanner(props) {
 					position: 'top-center',
 					theme: 'colored',
 				});
+				props.resetStates();
 				props.updateTransactions(response.data.transaction);
 				props.updateWalletBalance(response.data.balance);
-				props.resetStates();
 				props.closeModal();
 				return;
 			}
@@ -61,10 +61,15 @@ function QrCodeScanner(props) {
 	const onScanFailure = (error) => {
 		// handle scan failure, usually better to ignore and keep scanning.
 		// for example:
+		console.warn(error);
 		if (error.includes('NotFoundException')) {
 			console.warn(`Code scan error = ${error}`);
 			return;
 		}
+		// html5QrcodeScanner.stop();
+	};
+
+	const handleClose = () => {
 		html5QrcodeScanner.stop();
 	};
 
@@ -79,7 +84,19 @@ function QrCodeScanner(props) {
 		);
 	}, []);
 
-	return <div id="reader" width="600px"></div>;
+	return (
+		<>
+			<div id="reader" width="600px"></div>
+			<button
+				type="button"
+				className="btn btn-primary btn-block btn-lg"
+				onClick={handleClose}
+				// data-bs-dismiss="modal"
+			>
+				Stop
+			</button>
+		</>
+	);
 }
 
 export default QrCodeScanner;

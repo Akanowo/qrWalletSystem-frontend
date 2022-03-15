@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../constants/axiosInstance';
 import { toast } from 'react-toastify';
 import { InfinitySpin } from 'react-loader-spinner';
+import QrCodeScanner from '../QrCodeScanner/QrCodeScanner';
 
 const defaultFields = [
 	'card_number',
@@ -11,7 +13,11 @@ const defaultFields = [
 	'amount',
 ];
 
+let $;
+
 function ActionSheets(props) {
+	const history = useNavigate();
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [fields, setFields] = useState(defaultFields);
 	const [mode, setMode] = useState('');
@@ -27,6 +33,104 @@ function ActionSheets(props) {
 	const [state, setState] = useState('');
 	const [country, setCountry] = useState('');
 	const [zipcode, setZipcode] = useState('');
+	const [showQrScanner, setShowQrScanner] = useState(false);
+	const [account_bank, setAccountBanks] = useState('');
+	const [account_number, setAccountNumber] = useState(
+		props.accountDetails &&
+			Object.getPrototypeOf(props.accountDetails) === Object.prototype &&
+			Object.keys(props.accountDetails).length === 0
+			? props.accountDetails.account_number
+			: ''
+	);
+	const [account_holder, setAccountHolder] = useState(
+		props.accountDetails &&
+			Object.getPrototypeOf(props.accountDetails) === Object.prototype &&
+			Object.keys(props.accountDetails).length === 0
+			? props.accountDetails.account_name
+			: ''
+	);
+	const [hidden, setHidden] = useState(true);
+	const [showAccountSummary, setShowAccountSummary] = useState(false);
+
+	useEffect(() => {
+		$ = window.$;
+	}, []);
+
+	const handleSendNext = (e) => {
+		e.preventDefault();
+		setShowQrScanner(true);
+	};
+
+	const handleWithdrawNext = (e) => {
+		e.preventDefault();
+		setShowAccountSummary(true);
+	};
+
+	const handleVerifyAccount = async () => {
+		setIsLoading(true);
+		const bank = props.banks.find((bank) => bank.code === account_bank);
+		const data = {
+			account_bank,
+			account_number,
+			bank_name: bank.name,
+		};
+
+		console.log(data);
+
+		let response;
+		try {
+			response = await (await axios.post('/account/update', data)).data;
+		} catch (error) {
+			setIsLoading(false);
+			setHidden(true);
+			setAccountHolder('');
+			console.log(error);
+			if (error.response && error.response.data) {
+				return toast(error.response.data.error || 'An error occured', {
+					type: 'error',
+					position: 'top-center',
+					theme: 'colored',
+				});
+			}
+			return;
+		}
+
+		setIsLoading(false);
+
+		console.log(response);
+
+		if (!response) {
+			return toast("Couldn't resolve bank details", {
+				position: 'top-center',
+				type: 'error',
+				theme: 'colored',
+			});
+		}
+
+		if (!response.status) {
+			return toast(response.message || "Couldn't resolve bank details", {
+				position: 'top-center',
+				type: 'error',
+				theme: 'colored',
+			});
+		}
+
+		toast(response.data.message, { type: 'success', position: 'top-center' });
+		setAccountHolder(response.data.account_name);
+		setHidden(false);
+
+		history('/home');
+	};
+
+	const handleWithdrawal = async () => {
+		// TODO: Handle Withdrawal
+		toast('Withdrawal placed', {
+			theme: 'colored',
+			position: 'top-center',
+			type: 'success',
+		});
+		closeModal();
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -325,9 +429,90 @@ function ActionSheets(props) {
 					</div>
 				);
 
+			case 'account':
+				return (
+					<>
+						<div className="form-group basic">
+							<label className="label" htmlFor="banks">
+								Select Bank
+							</label>
+							<div className="input-group mb-2">
+								<select
+									className="form-control custom-select"
+									id="banks"
+									value={account_bank}
+									onChange={(e) => setAccountBanks(e.target.value)}
+								>
+									{props.banks.map((bank) => (
+										<option key={bank.code} value={bank.code}>
+											{bank.name}
+										</option>
+									))}
+								</select>
+							</div>
+						</div>
+
+						<div className="form-group basic">
+							<label className="label" htmlFor="account_number">
+								Enter Account Number
+							</label>
+							<div className="input-group mb-2">
+								<input
+									id="account_number"
+									type="text"
+									className="form-control"
+									placeholder="Account Number"
+									value={account_number}
+									onChange={(e) => setAccountNumber(e.target.value)}
+								/>
+							</div>
+						</div>
+
+						{hidden ? null : (
+							<div className="form-group basic">
+								<label className="label">Account Holder</label>
+								<div className="input-group mb-2">
+									<input
+										type="text"
+										className="form-control"
+										placeholder="Account Number"
+										value={account_holder}
+										hidden={hidden}
+										readOnly
+									/>
+								</div>
+							</div>
+						)}
+					</>
+				);
+
 			default:
 				return null;
 		}
+	};
+
+	const resetStates = () => {
+		setIsLoading(false);
+		setFields(defaultFields);
+		setMode('');
+		setCardNumber('');
+		setExpiryMonth('');
+		setExpiryYear('');
+		setCvv('');
+		setPin('');
+		setOtp('');
+		setCity('');
+		setState('');
+		setCountry('');
+		setShowQrScanner(false);
+		setAmount(0);
+	};
+
+	const closeModal = () => {
+		$(`#depositActionSheet`).modal('hide');
+		$(`#withdrawActionSheet`).modal('hide');
+		$(`#sendActionSheet`).modal('hide');
+		$(`#setAccountActionSheet`).modal('hide');
 	};
 
 	return (
@@ -389,65 +574,50 @@ function ActionSheets(props) {
 						</div>
 						<div className="modal-body">
 							<div className="action-sheet-content">
-								<form>
-									<div className="form-group basic">
-										<div className="input-wrapper">
-											<label className="label" htmlFor="account2d">
-												From
-											</label>
-											<select
-												className="form-control custom-select"
-												id="account2d"
-											>
-												<option value="0">Savings (*** 5019)</option>
-												<option value="1">Investment (*** 6212)</option>
-												<option value="2">Mortgage (*** 5021)</option>
-											</select>
-										</div>
-									</div>
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<>
+										{showAccountSummary ? (
+											<>
+												<div>
+													<h2>Withdrawal Summary:</h2>
+													<p>Account: {props.accountDetails.account_name}</p>
+													<p>
+														Account Number:{' '}
+														{props.accountDetails.account_number}
+													</p>
+													<p>Bank: {props.accountDetails.bank_name}</p>
+												</div>
+												<div className="form-group basic">
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+														onClick={handleWithdrawal}
+														// data-bs-dismiss="modal"
+													>
+														Proceed
+													</button>
+												</div>
+											</>
+										) : (
+											<form>
+												{returnInput('amount')}
 
-									<div className="form-group basic">
-										<div className="input-wrapper">
-											<label className="label" htmlFor="text11d">
-												To
-											</label>
-											<input
-												type="email"
-												className="form-control"
-												id="text11d"
-												placeholder="Enter IBAN"
-											/>
-											<i className="clear-input">
-												<ion-icon name="close-circle"></ion-icon>
-											</i>
-										</div>
-									</div>
-
-									<div className="form-group basic">
-										<label className="label">Enter Amount</label>
-										<div className="input-group mb-2">
-											<span className="input-group-text" id="basic-addonb1">
-												$
-											</span>
-											<input
-												type="text"
-												className="form-control"
-												placeholder="Enter an amount"
-												value="100"
-											/>
-										</div>
-									</div>
-
-									<div className="form-group basic">
-										<button
-											type="button"
-											className="btn btn-primary btn-block btn-lg"
-											data-bs-dismiss="modal"
-										>
-											Withdraw
-										</button>
-									</div>
-								</form>
+												<div className="form-group basic">
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+														onClick={handleWithdrawNext}
+														// data-bs-dismiss="modal"
+													>
+														Next
+													</button>
+												</div>
+											</form>
+										)}
+									</>
+								)}
 							</div>
 						</div>
 					</div>
@@ -469,71 +639,85 @@ function ActionSheets(props) {
 						</div>
 						<div className="modal-body">
 							<div className="action-sheet-content">
-								<form>
-									<div className="form-group basic">
-										<div className="input-wrapper">
-											<label className="label" htmlFor="account2">
-												From
-											</label>
-											<select
-												className="form-control custom-select"
-												id="account2"
-											>
-												<option value="0">Savings (*** 5019)</option>
-												<option value="1">Investment (*** 6212)</option>
-												<option value="2">Mortgage (*** 5021)</option>
-											</select>
-										</div>
-									</div>
-
-									<div className="form-group basic">
-										<div className="input-wrapper">
-											<label className="label" htmlFor="text11">
-												To
-											</label>
-											<input
-												type="email"
-												className="form-control"
-												id="text11"
-												placeholder="Enter bank ID"
-											/>
-											<i className="clear-input">
-												<ion-icon name="close-circle"></ion-icon>
-											</i>
-										</div>
-									</div>
-
-									<div className="form-group basic">
-										<label className="label">Enter Amount</label>
-										<div className="input-group mb-2">
-											<span className="input-group-text" id="basic-addon1">
-												$
-											</span>
-											<input
-												type="text"
-												className="form-control"
-												placeholder="Enter an amount"
-												value="100"
-											/>
-										</div>
-									</div>
-
-									<div className="form-group basic">
-										<button
-											type="button"
-											className="btn btn-primary btn-block btn-lg"
-											data-bs-dismiss="modal"
-										>
-											Send
-										</button>
-									</div>
-								</form>
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<form>
+										{showQrScanner ? (
+											<>
+												<QrCodeScanner
+													amount={amount}
+													setIsLoading={setIsLoading}
+													updateTransactions={props.updateTransactions}
+													updateWalletBalance={props.updateWalletBalance}
+													closeModal={closeModal}
+													resetStates={resetStates}
+												/>
+											</>
+										) : (
+											<>
+												{returnInput('amount')}
+												<div className="form-group basic">
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+														// data-bs-dismiss="modal"
+														onClick={handleSendNext}
+													>
+														Next
+													</button>
+												</div>
+											</>
+										)}
+									</form>
+								)}
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			{/* <!-- * Send Action Sheet --> */}
+
+			{/* <!-- Set Account Action Sheet --> */}
+			<div
+				className="modal fade action-sheet"
+				id="setAccountActionSheet"
+				tabIndex="-1"
+				role="dialog"
+			>
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Set Account</h5>
+						</div>
+						<div className="modal-body">
+							<div className="action-sheet-content">
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<>
+										<form>
+											{returnInput('account')}
+
+											<div className="form-group basic">
+												<button
+													type="button"
+													className="btn btn-primary btn-block btn-lg"
+													onClick={handleVerifyAccount}
+													// data-bs-dismiss="modal"
+												>
+													Withdraw
+												</button>
+											</div>
+										</form>
+									</>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <!-- * Set Action Action Sheet --> */}
 		</>
 	);
 }

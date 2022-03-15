@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-	AddOutline,
-	ArrowDownOutline,
-	ArrowForwardOutline,
 	PieChartOutline,
 	SettingsOutline,
 	LogOutOutline,
@@ -43,7 +40,7 @@ function Sidebar(props) {
 									className="btn btn-link btn-icon sidebar-close"
 									data-bs-dismiss="modal"
 								>
-									<CloseOutline color={'#fff'} />
+									<CloseOutline color={'#000'} />
 								</a>
 							</div>
 							{/* <!-- * profile box --> */}
@@ -110,7 +107,7 @@ function Sidebar(props) {
 							{/* <!-- others --> */}
 							<div className="listview-title mt-1">Others</div>
 							<ul className="listview flush transparent no-line image-listview">
-								<li>
+								<li data-bs-dismiss="modal">
 									<Link to="/settings" className="item">
 										<div className="icon-box bg-primary">
 											<SettingsOutline color={'#fff'} />
@@ -118,7 +115,7 @@ function Sidebar(props) {
 										<div className="in">Settings</div>
 									</Link>
 								</li>
-								<li>
+								<li data-bs-dismiss="modal">
 									<Link to="/logout" className="item">
 										<div className="icon-box bg-primary">
 											<LogOutOutline color={'#fff'} />

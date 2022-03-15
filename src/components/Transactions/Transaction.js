@@ -9,9 +9,9 @@ function Transactions(props) {
 			<div className="section mt-4">
 				<div className="section-heading">
 					<h2 className="title">Transactions</h2>
-					<a href="app-transactions.html" className="link">
+					{/* <a href="app-transactions.html" className="link">
 						View All
-					</a>
+					</a> */}
 				</div>
 				<div className="transactions">
 					{props.transactions
@@ -69,12 +69,24 @@ function Transactions(props) {
 													}`}
 										>
 											{transaction.operation === 'debit'
-												? '-'
+												? '-' +
+												  Intl.NumberFormat('en-NG', {
+														style: 'currency',
+														currency: 'NGN',
+												  }).format(
+														transaction.app_fee
+															? transaction.amount - transaction.app_fee
+															: transaction.amount
+												  )
 												: '+' +
 												  Intl.NumberFormat('en-NG', {
 														style: 'currency',
 														currency: 'NGN',
-												  }).format(transaction.amount - transaction.app_fee)}
+												  }).format(
+														transaction.app_fee
+															? transaction.amount - transaction.app_fee
+															: transaction.amount
+												  )}
 										</div>
 									</div>
 								</Link>

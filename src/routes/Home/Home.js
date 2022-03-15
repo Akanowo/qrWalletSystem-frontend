@@ -4,11 +4,12 @@ import axios from '../../constants/axiosInstance';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader/Loader';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import BottomMenu from '../../components/BottomMenu/BottomMenu';
+// import BottomMenu from '../../components/BottomMenu/BottomMenu';
 import WalletCard from './WalletCard/WalletCard';
 import Transactions from '../../components/Transactions/Transaction';
 import Header from '../../components/Header/Header';
 import ActionSheets from '../../components/ActionSheets/ActionSheets';
+import AddToHomeScreen from '../../constants/AddToHomeScreen/AddToHomeScreen';
 
 function Home(props) {
 	console.log(props);
@@ -19,6 +20,8 @@ function Home(props) {
 	const [qrCodeDetails, setQrCodeDetails] = useState({});
 	const [redirect, setRedirect] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const [operation, setOperation] = useState('');
+	const [accountDetails, setAccountDetails] = useState({});
 
 	useEffect(() => {
 		(async function getProfile() {
@@ -53,12 +56,31 @@ function Home(props) {
 			console.log(profile);
 			setUserDetails(profile.data.user);
 			setWalletDetails(profile.data.wallet);
-			setTransactions(profile.data.transactions);
+			setTransactions(profile.data.transactions.reverse());
 			setQrCodeDetails(profile.data.qrcode);
+			setAccountDetails(profile.data.account);
 		})();
 
 		// fetch profile details
 	}, []);
+
+	const updateTransactions = (transaction) => {
+		const updatedTransactions = [...transactions];
+
+		updatedTransactions.unshift(transaction);
+
+		setTransactions(updatedTransactions);
+	};
+
+	const updateWalletBalance = (balance) => {
+		const wallet = { ...walletDetails };
+
+		wallet.balance = balance;
+
+		setWalletDetails(wallet);
+	};
+
+	const handleSetOp = (op) => {};
 
 	return (
 		<>
@@ -70,16 +92,31 @@ function Home(props) {
 						<Loader />
 					) : (
 						<>
-							<Header />
+							<Header pageTitle="home" />
 							<div id="appCapsule">
-								<WalletCard wallet={walletDetails} />
+								<WalletCard
+									wallet={walletDetails}
+									setOperation={handleSetOp}
+									accountDetails={accountDetails}
+								/>
 
-								<ActionSheets setIsLoading={setIsLoading} />
+								<ActionSheets
+									accountDetails={accountDetails}
+									setIsLoading={setIsLoading}
+									updateWalletBalance={updateWalletBalance}
+									updateTransactions={updateTransactions}
+									updateAccountDetails={setAccountDetails}
+									banks={[]}
+								/>
 
-								<Transactions transactions={transactions} />
+								<Transactions
+									transactions={transactions}
+									operation={operation}
+								/>
 							</div>
 							{/* <BottomMenu /> */}
 							<Sidebar user={userDetails} wallet={walletDetails} />
+							<AddToHomeScreen />
 						</>
 					)}
 				</>

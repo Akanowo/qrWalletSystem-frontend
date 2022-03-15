@@ -5,8 +5,24 @@ import {
 	ArrowForwardOutline,
 	ArrowUpOutline,
 } from 'react-ionicons';
+import { toast } from 'react-toastify';
 
 function WalletCard(props) {
+	const checkAccountExists = (e) => {
+		if (
+			props.accountDetails &&
+			Object.getPrototypeOf(props.accountDetails) === Object.prototype &&
+			Object.keys(props.accountDetails).length === 0
+		) {
+			// deny showing action sheet
+			e.preventDefault();
+			return toast('Please set your account details in settings', {
+				position: 'top-center',
+				type: 'warning',
+			});
+		}
+	};
+
 	return (
 		<>
 			{/* <!-- Wallet Card --> */}
@@ -63,11 +79,25 @@ function WalletCard(props) {
 							</a>
 						</div>
 
-						<div className="item">
+						<div className="item" onClick={checkAccountExists}>
 							<a
 								href="#"
-								data-bs-toggle="modal"
-								data-bs-target="#withdrawActionSheet"
+								data-bs-toggle={
+									props.accountDetails &&
+									Object.getPrototypeOf(props.accountDetails) ===
+										Object.prototype &&
+									Object.keys(props.accountDetails).length === 0
+										? null
+										: 'modal'
+								}
+								data-bs-target={
+									props.accountDetails &&
+									Object.getPrototypeOf(props.accountDetails) ===
+										Object.prototype &&
+									Object.keys(props.accountDetails).length === 0
+										? null
+										: '#withdrawActionSheet'
+								}
 							>
 								<div className="icon-wrapper bg-danger">
 									<ArrowDownOutline color={'#fff'} />

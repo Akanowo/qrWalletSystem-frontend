@@ -31,7 +31,9 @@ function Sidebar(props) {
 								</div>
 								<div className="in">
 									<strong>
-										{props.user.firstName + ' ' + props.user.lastName}
+										{props.user.type === 'vendor'
+											? props.user.vendorName
+											: props.user.firstName + ' ' + props.user.lastName}
 									</strong>
 									{/* <div className="text-muted">4029209</div> */}
 								</div>

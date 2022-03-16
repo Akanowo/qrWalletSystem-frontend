@@ -706,7 +706,7 @@ function ActionSheets(props) {
 													onClick={handleVerifyAccount}
 													// data-bs-dismiss="modal"
 												>
-													Withdraw
+													Update Account
 												</button>
 											</div>
 										</form>
@@ -718,6 +718,37 @@ function ActionSheets(props) {
 				</div>
 			</div>
 			{/* <!-- * Set Action Action Sheet --> */}
+
+			{/* <!-- Show Qrcode Action Sheet --> */}
+			<div
+				className="modal fade action-sheet"
+				id="showQrActionSheet"
+				tabIndex="-1"
+				role="dialog"
+			>
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Qrcode</h5>
+						</div>
+						<div className="modal-body">
+							<div className="action-sheet-content center">
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<>
+										<img
+											src={props.qrcode ? props.qrcode.url : null}
+											className="qrImage"
+										/>
+									</>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <!-- * Show Qrcode Action Sheet --> */}
 		</>
 	);
 }

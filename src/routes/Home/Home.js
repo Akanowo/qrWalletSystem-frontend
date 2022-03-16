@@ -34,18 +34,18 @@ function Home(props) {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							toast(error.response.data.error, {
-								type: 'error',
-								position: 'top-center',
-							});
+							// toast(error.response.data.error, {
+							// 	type: 'error',
+							// 	position: 'top-center',
+							// });
 							return setRedirect('/login');
 
 						default:
-							toast(error.response.data.error || 'An error occured', {
-								type: 'error',
-								position: 'top-center',
-								theme: 'colored',
-							});
+							// toast(error.response.data.error || 'An error occured', {
+							// 	type: 'error',
+							// 	position: 'top-center',
+							// 	theme: 'colored',
+							// });
 							return setRedirect('/login');
 					}
 				}
@@ -58,7 +58,7 @@ function Home(props) {
 			setWalletDetails(profile.data.wallet);
 			setTransactions(profile.data.transactions.reverse());
 			setQrCodeDetails(profile.data.qrcode);
-			setAccountDetails(profile.data.account);
+			setAccountDetails(profile.data.account ? profile.data.account : {});
 		})();
 
 		// fetch profile details
@@ -96,6 +96,7 @@ function Home(props) {
 							<div id="appCapsule">
 								<WalletCard
 									wallet={walletDetails}
+									user={userDetails}
 									setOperation={handleSetOp}
 									accountDetails={accountDetails}
 								/>
@@ -106,6 +107,7 @@ function Home(props) {
 									updateWalletBalance={updateWalletBalance}
 									updateTransactions={updateTransactions}
 									updateAccountDetails={setAccountDetails}
+									qrcode={qrCodeDetails}
 									banks={[]}
 								/>
 

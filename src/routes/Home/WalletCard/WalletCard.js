@@ -4,6 +4,7 @@ import {
 	ArrowDownOutline,
 	ArrowForwardOutline,
 	ArrowUpOutline,
+	EyeOutline,
 } from 'react-ionicons';
 import { toast } from 'react-toastify';
 
@@ -53,31 +54,48 @@ function WalletCard(props) {
 					{/* <!-- * Balance --> */}
 					{/* <!-- Wallet Footer --> */}
 					<div className="wallet-footer">
-						<div className="item">
-							<a
-								href="#"
-								data-bs-toggle="modal"
-								data-bs-target="#depositActionSheet"
-							>
-								<div className="icon-wrapper bg-danger">
-									<ArrowUpOutline color={'#fff'} />
-								</div>
-								<strong>Topup</strong>
-							</a>
-						</div>
+						{props.user.type === 'vendor' ? (
+							<div className="item">
+								<a
+									href="#"
+									data-bs-toggle="modal"
+									data-bs-target="#showQrActionSheet"
+								>
+									<div className="icon-wrapper bg-danger">
+										<EyeOutline color={'#fff'} />
+									</div>
+									<strong>QrCode</strong>
+								</a>
+							</div>
+						) : (
+							<div className="item">
+								<a
+									href="#"
+									data-bs-toggle="modal"
+									data-bs-target="#depositActionSheet"
+								>
+									<div className="icon-wrapper bg-danger">
+										<ArrowUpOutline color={'#fff'} />
+									</div>
+									<strong>Topup</strong>
+								</a>
+							</div>
+						)}
 
-						<div className="item">
-							<a
-								href="#"
-								data-bs-toggle="modal"
-								data-bs-target="#sendActionSheet"
-							>
-								<div className="icon-wrapper">
-									<ArrowForwardOutline color={'#fff'} />
-								</div>
-								<strong>Send</strong>
-							</a>
-						</div>
+						{props.user.type === 'vendor' ? null : (
+							<div className="item">
+								<a
+									href="#"
+									data-bs-toggle="modal"
+									data-bs-target="#sendActionSheet"
+								>
+									<div className="icon-wrapper">
+										<ArrowForwardOutline color={'#fff'} />
+									</div>
+									<strong>Send</strong>
+								</a>
+							</div>
+						)}
 
 						<div className="item" onClick={checkAccountExists}>
 							<a

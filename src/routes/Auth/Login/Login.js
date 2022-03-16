@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from '../../../constants/axiosInstance';
 import { toast } from 'react-toastify';
 import Loader from '../../../components/Loader/Loader';
-import { Navigate as Redirect } from 'react-router-dom';
+import { Link, Navigate as Redirect } from 'react-router-dom';
 import AddToHomeScreen from '../../../constants/AddToHomeScreen/AddToHomeScreen';
 
 function Login() {
@@ -109,16 +109,16 @@ function Login() {
 
 										<div className="form-links mt-2">
 											<div>
-												<a href="app-register.html">Register Now</a>
+												<Link to="/signup">Register Now</Link>
 											</div>
-											<div>
+											{/* <div>
 												<a
 													href="app-forgot-password.html"
 													className="text-muted"
 												>
 													Forgot Password?
 												</a>
-											</div>
+											</div> */}
 										</div>
 
 										<div className="form-button-group  transparent">

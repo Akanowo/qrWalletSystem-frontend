@@ -6703,3 +6703,23 @@ body.dark-mode.rtl-mode
 body.dark-mode .cookies-box {
 	background: #20183b;
 }
+
+.qrImage {
+	width: 50%;
+}
+
+.center {
+	text-align: center;
+}
+
+@media screen and (max-width: 480px) {
+	.qrImage {
+		width: 100%;
+	}
+}
+
+@media screen and (min-width: 780px) {
+	.qrImage {
+		width: 30%;
+	}
+}

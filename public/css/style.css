@@ -6712,6 +6712,31 @@ body.dark-mode .cookies-box {
 	text-align: center;
 }
 
+.capitalize {
+	text-transform: capitalize;
+}
+
+.removeBorderAndPadding {
+	border: none !important;
+	padding-top: 0px !important;
+}
+
+.removeBoxShadow {
+	box-shadow: none;
+}
+
+.icon-wrapper {
+	width: 48px;
+	height: 48px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	color: #fff;
+	font-size: 24px;
+	margin-bottom: 14px;
+}
+
 @media screen and (max-width: 480px) {
 	.qrImage {
 		width: 100%;

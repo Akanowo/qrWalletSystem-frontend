@@ -13,6 +13,7 @@ import Signup from './routes/Auth/Signup/Signup';
 import Logout from './routes/Logout/Logout';
 import Settings from './routes/Settings/Settings';
 import VerifyEmail from './routes/Verify Email/VerifyEmail';
+import TransactionDetails from './components/Transactions/TransactionDetails';
 
 function App() {
 	return (
@@ -25,6 +26,7 @@ function App() {
 				<Route path="/signup" element={<Signup />} />
 				<Route path="/settings" element={<Settings />} />
 				<Route path="/verify-email" element={<VerifyEmail />} />
+				<Route path="/transactions/:id" element={<TransactionDetails />} />
 				<Route path="/logout" element={<Logout />} />
 				<Route path="/*" element={<Redirect to="/home" />} />
 			</Switch>

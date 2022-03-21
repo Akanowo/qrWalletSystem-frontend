@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
 	MenuOutline,
 	NotificationsOutline,
@@ -26,18 +26,18 @@ export default function Header(props) {
 						<img src="/img/logo.png" alt="logo" className="logo" />
 					</div>
 					<div className="right">
-						<a href="#" className="headerButton">
+						{/* <a href="#" className="headerButton">
 							<NotificationsOutline cssClasses={'icon'} color={'#fff'} />
 							<span className="badge badge-danger">4</span>
-						</a>
-						<a href="#" className="headerButton">
+						</a> */}
+						<Link to="/settings" className="headerButton">
 							<img
 								src="/img/avatar/avatar1.jpg"
 								alt="image"
 								className="imaged w32"
 							/>
-							<span className="badge badge-danger">6</span>
-						</a>
+							{/* <span className="badge badge-danger">6</span> */}
+						</Link>
 					</div>
 				</>
 			) : (
@@ -49,10 +49,10 @@ export default function Header(props) {
 					</div>
 					<div className="pageTitle">{props.pageTitle}</div>
 					<div className="right">
-						<a href="app-notifications.html" className="headerButton">
+						{/* <a href="app-notifications.html" className="headerButton">
 							<NotificationsOutline cssClasses={'icon'} />
 							<span className="badge badge-danger">4</span>
-						</a>
+						</a> */}
 					</div>
 				</>
 			)}

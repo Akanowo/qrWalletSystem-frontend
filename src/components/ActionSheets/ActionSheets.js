@@ -4,6 +4,13 @@ import axios from '../../constants/axiosInstance';
 import { toast } from 'react-toastify';
 import { InfinitySpin } from 'react-loader-spinner';
 import QrCodeScanner from '../QrCodeScanner/QrCodeScanner';
+import {
+	CardOutline,
+	PhonePortraitOutline,
+	ArrowForwardOutline,
+} from 'react-ionicons';
+import { supportedBanks } from '../../utils/supportedBanks';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const defaultFields = [
 	'card_number',
@@ -51,6 +58,10 @@ function ActionSheets(props) {
 	);
 	const [hidden, setHidden] = useState(true);
 	const [showAccountSummary, setShowAccountSummary] = useState(false);
+	const [showUssdBanks, setShowUssdBanks] = useState(false);
+	const [transferAccount, setTransferAccount] = useState({});
+	const [showUssdDetails, setShowUssdDetails] = useState(false);
+	const [ussdDetails, setUssdDetails] = useState({});
 
 	useEffect(() => {
 		$ = window.$;
@@ -515,8 +526,126 @@ function ActionSheets(props) {
 		$(`#setAccountActionSheet`).modal('hide');
 	};
 
+	const fetchTransferDetails = async () => {
+		setIsLoading(true);
+
+		let response;
+
+		try {
+			response = await axios.post();
+		} catch (error) {}
+	};
+
+	const handleFetchUSSDcode = async (code) => {
+		setIsLoading(true);
+		const data = {
+			amount,
+			account_bank_code: code,
+		};
+
+		let response;
+		try {
+			response = await (await axios.post('/payment/topup/ussd', data)).data;
+		} catch (error) {
+			setIsLoading(false);
+			if (error.response && error.response.data) {
+				return toast(error.response.data.error || 'An error occured', {
+					type: 'error',
+					position: 'top-center',
+					theme: 'colored',
+				});
+			}
+		}
+
+		setIsLoading(false);
+
+		if (!response) {
+			return toast('An error occured', {
+				type: 'error',
+				position: 'top-center',
+			});
+		}
+
+		const details = {
+			code: response.data.ussdCode,
+			paymentCode: response.data.paymentCode,
+		};
+		setUssdDetails(details);
+		setShowUssdDetails(true);
+		setShowUssdBanks(false);
+	};
+
 	return (
 		<>
+			{/* <!-- Choice Action Sheet --> */}
+			<div
+				className="modal fade action-sheet"
+				id="choiceActionSheet"
+				tabIndex="-1"
+				role="dialog"
+			>
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Choose Method</h5>
+						</div>
+						<div className="modal-body">
+							{isLoading ? (
+								<InfinitySpin color="#000" />
+							) : (
+								<>
+									<div className="action-sheet-content">
+										<div className="wallet-card removeBoxShadow">
+											<div className="wallet-footer removeBorderAndPadding">
+												<div className="item">
+													<a
+														href="#"
+														data-bs-toggle="modal"
+														data-bs-target="#depositActionSheet"
+													>
+														<div className="icon-wrapper bg-danger">
+															<CardOutline color={'#fff'} />
+														</div>
+														<strong>Card</strong>
+													</a>
+												</div>
+
+												<div className="item">
+													<a
+														href="#"
+														data-bs-toggle="modal"
+														data-bs-target="#transferActionSheet"
+													>
+														<div className="icon-wrapper">
+															<ArrowForwardOutline color={'#fff'} />
+														</div>
+														<strong>Transfer</strong>
+													</a>
+												</div>
+
+												<div className="item">
+													<a
+														href="#"
+														data-bs-toggle="modal"
+														data-bs-target="#ussdActionSheet"
+													>
+														<div className="icon-wrapper">
+															<PhonePortraitOutline color={'#fff'} />
+														</div>
+														<strong>USSD</strong>
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <!-- * Choice Action Sheet --> */}
+
 			{/* <!-- Deposit Action Sheet --> */}
 			<div
 				className="modal fade action-sheet"
@@ -749,6 +878,128 @@ function ActionSheets(props) {
 				</div>
 			</div>
 			{/* <!-- * Show Qrcode Action Sheet --> */}
+
+			{/* <!-- Topup Transfer Action Sheet --> */}
+			<div
+				className="modal fade action-sheet"
+				id="transferActionSheet"
+				tabIndex="-1"
+				role="dialog"
+			>
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Transfer</h5>
+						</div>
+						<div className="modal-body">
+							<div className="action-sheet-content">
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<>
+										<div>
+											<h2>Transfer Summary:</h2>
+											<p>
+												Account Number: {props.accountDetails.account_number}
+											</p>
+											<p>Bank: {props.accountDetails.bank_name}</p>
+										</div>
+										{/* <div className="form-group basic">
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+														onClick={handleWithdrawal}
+														// data-bs-dismiss="modal"
+													>
+														Proceed
+													</button>
+												</div> */}
+									</>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <!-- * Topup Transfer Action Sheet --> */}
+
+			{/* <!-- Topup USSD Action Sheet --> */}
+			<div
+				className="modal fade action-sheet"
+				id="ussdActionSheet"
+				tabIndex="-1"
+				role="dialog"
+			>
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">USSD</h5>
+						</div>
+						<div className="modal-body">
+							<div className="action-sheet-content">
+								{isLoading ? (
+									<InfinitySpin color="#000" />
+								) : (
+									<form>
+										{showUssdBanks ? (
+											<>
+												<h2>Select Bank</h2>
+												<ul className="listview flush transparent no-line image-listview">
+													{supportedBanks.map((bank) => (
+														<li
+															key={bank.code}
+															onClick={() => handleFetchUSSDcode(bank.code)}
+														>
+															{bank.name}
+														</li>
+													))}
+												</ul>
+											</>
+										) : (
+											<>
+												{returnInput('amount')}
+												<div className="form-group basic">
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+														// data-bs-dismiss="modal"
+														onClick={() => setShowUssdBanks(true)}
+													>
+														Next
+													</button>
+												</div>
+											</>
+										)}
+										{showUssdDetails ? (
+											<div>
+												<h2>USSD Summary:</h2>
+												<p>To complete the transaction, dial the code below</p>
+												<p>Code: {ussdDetails.code}</p>
+												<CopyToClipboard
+													onCopy={() =>
+														toast('Copied to clipboard', {
+															type: 'success',
+															position: 'top-center',
+														})
+													}
+												>
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+													>
+														Copy Code
+													</button>
+												</CopyToClipboard>
+											</div>
+										) : null}
+									</form>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <!-- * Topup Transfer Action Sheet --> */}
 		</>
 	);
 }

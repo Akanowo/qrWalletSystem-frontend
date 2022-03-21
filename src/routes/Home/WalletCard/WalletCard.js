@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-	AddOutline,
 	ArrowDownOutline,
 	ArrowForwardOutline,
 	ArrowUpOutline,
@@ -72,7 +71,7 @@ function WalletCard(props) {
 								<a
 									href="#"
 									data-bs-toggle="modal"
-									data-bs-target="#depositActionSheet"
+									data-bs-target="#choiceActionSheet"
 								>
 									<div className="icon-wrapper bg-danger">
 										<ArrowUpOutline color={'#fff'} />

@@ -6,26 +6,26 @@ function AddToHomeScreen() {
 		<>
 			{/* <!-- iOS Add to Home Action Sheet --> */}
 			<div
-				class="modal inset fade action-sheet ios-add-to-home"
+				className="modal inset fade action-sheet ios-add-to-home"
 				id="ios-add-to-home-screen"
 				tabIndex="-1"
 				role="dialog"
 			>
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Add to Home Screen</h5>
-							<a href="#" class="close-button" data-bs-dismiss="modal">
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Add to Home Screen</h5>
+							<a href="#" className="close-button" data-bs-dismiss="modal">
 								<Close />
 							</a>
 						</div>
-						<div class="modal-body">
-							<div class="action-sheet-content text-center">
-								<div class="mb-1">
+						<div className="modal-body">
+							<div className="action-sheet-content text-center">
+								<div className="mb-1">
 									<img
 										src="assets/img/icon/192x192.png"
 										alt="image"
-										class="imaged w64 mb-2"
+										className="imaged w64 mb-2"
 									/>
 								</div>
 								<div>
@@ -34,9 +34,9 @@ function AddToHomeScreen() {
 								<div>
 									Tap <ShareOutline /> and Add to homescreen.
 								</div>
-								<div class="mt-2">
+								<div className="mt-2">
 									<button
-										class="btn btn-primary btn-block"
+										className="btn btn-primary btn-block"
 										data-bs-dismiss="modal"
 									>
 										CLOSE
@@ -51,26 +51,26 @@ function AddToHomeScreen() {
 
 			{/* <!-- Android Add to Home Action Sheet --> */}
 			<div
-				class="modal inset fade action-sheet android-add-to-home"
+				className="modal inset fade action-sheet android-add-to-home"
 				id="android-add-to-home-screen"
 				tabIndex="-1"
 				role="dialog"
 			>
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Add to Home Screen</h5>
-							<a href="#" class="close-button" data-bs-dismiss="modal">
+				<div className="modal-dialog" role="document">
+					<div className="modal-content">
+						<div className="modal-header">
+							<h5 className="modal-title">Add to Home Screen</h5>
+							<a href="#" className="close-button" data-bs-dismiss="modal">
 								<Close />
 							</a>
 						</div>
-						<div class="modal-body">
-							<div class="action-sheet-content text-center">
-								<div class="mb-1">
+						<div className="modal-body">
+							<div className="action-sheet-content text-center">
+								<div className="mb-1">
 									<img
 										src="/img/icon/192x192.png"
 										alt="image"
-										class="imaged w64 mb-2"
+										className="imaged w64 mb-2"
 									/>
 								</div>
 								<div>
@@ -79,9 +79,9 @@ function AddToHomeScreen() {
 								<div>
 									Tap <EllipsisVertical /> and Add to homescreen.
 								</div>
-								<div class="mt-2">
+								<div className="mt-2">
 									<button
-										class="btn btn-primary btn-block"
+										className="btn btn-primary btn-block"
 										data-bs-dismiss="modal"
 									>
 										CLOSE

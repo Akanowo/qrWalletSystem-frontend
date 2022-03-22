@@ -11,6 +11,9 @@ import {
 } from 'react-ionicons';
 import { supportedBanks } from '../../utils/supportedBanks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import DatePicker from 'react-datepicker';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 const defaultFields = [
 	'card_number',
@@ -18,6 +21,14 @@ const defaultFields = [
 	'expiry_year',
 	'cvv',
 	'amount',
+];
+
+const bvnValidationFields = [
+	'first_name',
+	'last_name',
+	'date_of_birth',
+	'phone_number',
+	'bvn',
 ];
 
 let $;
@@ -62,6 +73,11 @@ function ActionSheets(props) {
 	const [transferAccount, setTransferAccount] = useState({});
 	const [showUssdDetails, setShowUssdDetails] = useState(false);
 	const [ussdDetails, setUssdDetails] = useState({});
+	const [first_name, setFirstName] = useState(props.accountDetails.firstName);
+	const [last_name, setLastName] = useState(props.accountDetails.lastName);
+	const [startDate, setStartDate] = useState(new Date());
+	const [phone_number, setPhoneNumber] = useState('');
+	const [bvn, setBvn] = useState('');
 
 	useEffect(() => {
 		$ = window.$;
@@ -440,6 +456,99 @@ function ActionSheets(props) {
 					</div>
 				);
 
+			case 'first_name':
+				return (
+					<div className="form-group basic">
+						<label className="label" htmlFor="first_name">
+							Enter your firstname
+						</label>
+						<div className="input-group mb-2">
+							<input
+								id="first_name"
+								type="text"
+								className="form-control"
+								placeholder="Firstname"
+								value={first_name}
+								onChange={(e) => setFirstName(e.target.value)}
+							/>
+						</div>
+					</div>
+				);
+
+			case 'last_name':
+				return (
+					<div className="form-group basic">
+						<label className="label" htmlFor="last_name">
+							Enter your lastname
+						</label>
+						<div className="input-group mb-2">
+							<input
+								id="last_name"
+								type="text"
+								className="form-control"
+								placeholder="Lastname"
+								value={last_name}
+								onChange={(e) => setLastName(e.target.value)}
+							/>
+						</div>
+					</div>
+				);
+
+			case 'date_of_birth':
+				return (
+					<div className="form-group basic">
+						<label className="label" htmlFor="dob">
+							Enter your DOB
+						</label>
+						<div className="input-group mb-2">
+							<DatePicker
+								id="dob"
+								className="form-control"
+								selected={startDate}
+								onChange={(date) => setStartDate(date)}
+							/>
+						</div>
+					</div>
+				);
+
+			case 'phone_number':
+				return (
+					<div className="form-group basic">
+						<label className="label" htmlFor="phone_number">
+							Enter your phone number
+						</label>
+						<div className="input-group mb-2">
+							<input
+								id="phone_number"
+								type="text"
+								className="form-control"
+								placeholder="Phone Number"
+								value={phone_number}
+								onChange={(e) => setPhoneNumber(e.target.value)}
+							/>
+						</div>
+					</div>
+				);
+
+			case 'bvn':
+				return (
+					<div className="form-group basic">
+						<label className="label" htmlFor="bvn">
+							Enter your BVN
+						</label>
+						<div className="input-group mb-2">
+							<input
+								id="bvn"
+								type="text"
+								className="form-control"
+								placeholder="BVN"
+								value={bvn}
+								onChange={(e) => setBvn(e.target.value)}
+							/>
+						</div>
+					</div>
+				);
+
 			case 'account':
 				return (
 					<>
@@ -573,6 +682,47 @@ function ActionSheets(props) {
 		setUssdDetails(details);
 		setShowUssdDetails(true);
 		setShowUssdBanks(false);
+	};
+
+	const handleGenerateVirtualAccount = async (e) => {
+		e.preventDefault();
+		setIsLoading(true);
+
+		let response;
+
+		try {
+			const data = {
+				first_name,
+				last_name,
+				phone_number,
+				date_of_birth: startDate,
+				bvn,
+			};
+
+			response = await (await axios.post('/payment/generate-vacc', data)).data;
+		} catch (error) {
+			setIsLoading(false);
+			if (error.response && error.response.data) {
+				return toast(error.response.data.error || 'An error occured', {
+					type: 'error',
+					position: 'top-center',
+					theme: 'colored',
+				});
+			}
+		}
+
+		setIsLoading(false);
+
+		if (!response) {
+			return toast('An error occured, try again', {
+				type: 'error',
+				position: 'top-center',
+			});
+		}
+
+		console.log(response);
+
+		props.setVirtualAccount(response.data);
 	};
 
 	return (
@@ -897,23 +1047,53 @@ function ActionSheets(props) {
 									<InfinitySpin color="#000" />
 								) : (
 									<>
-										<div>
-											<h2>Transfer Summary:</h2>
-											<p>
-												Account Number: {props.accountDetails.account_number}
-											</p>
-											<p>Bank: {props.accountDetails.bank_name}</p>
-										</div>
-										{/* <div className="form-group basic">
+										{props.virtualAccount &&
+										Object.getPrototypeOf(props.virtualAccount) ===
+											Object.prototype &&
+										Object.keys(props.virtualAccount).length === 0 ? (
+											<>
+												{bvnValidationFields.map((field) => (
+													<div key={field}>{returnInput(field)}</div>
+												))}
+												<div className="form-group basic">
 													<button
 														type="button"
 														className="btn btn-primary btn-block btn-lg"
-														onClick={handleWithdrawal}
+														onClick={handleGenerateVirtualAccount}
 														// data-bs-dismiss="modal"
 													>
 														Proceed
 													</button>
-												</div> */}
+												</div>
+											</>
+										) : (
+											<>
+												<div>
+													<h2>Transfer Summary:</h2>
+													<p>
+														Account Number:{' '}
+														{props.virtualAccount.account_number}
+													</p>
+													<p>Bank: {props.virtualAccount.bank_name}</p>
+												</div>
+												<CopyToClipboard
+													text={props.virtualAccount.account_number}
+													onCopy={() =>
+														toast('Copied to clipboard', {
+															type: 'success',
+															position: 'top-center',
+														})
+													}
+												>
+													<button
+														type="button"
+														className="btn btn-primary btn-block btn-lg"
+													>
+														Copy Account Details
+													</button>
+												</CopyToClipboard>
+											</>
+										)}
 									</>
 								)}
 							</div>
@@ -949,6 +1129,7 @@ function ActionSheets(props) {
 														<li
 															key={bank.code}
 															onClick={() => handleFetchUSSDcode(bank.code)}
+															className="mb-2"
 														>
 															{bank.name}
 														</li>
@@ -976,6 +1157,7 @@ function ActionSheets(props) {
 												<p>To complete the transaction, dial the code below</p>
 												<p>Code: {ussdDetails.code}</p>
 												<CopyToClipboard
+													text={ussdDetails.code}
 													onCopy={() =>
 														toast('Copied to clipboard', {
 															type: 'success',

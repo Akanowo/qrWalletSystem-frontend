@@ -9,7 +9,7 @@ import WalletCard from './WalletCard/WalletCard';
 import Transactions from '../../components/Transactions/Transaction';
 import Header from '../../components/Header/Header';
 import ActionSheets from '../../components/ActionSheets/ActionSheets';
-import AddToHomeScreen from '../../constants/AddToHomeScreen/AddToHomeScreen';
+import AddToHomeScreen from '../../containers/AddToHomeScreen/AddToHomeScreen';
 
 function Home(props) {
 	console.log(props);
@@ -22,6 +22,7 @@ function Home(props) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [operation, setOperation] = useState('');
 	const [accountDetails, setAccountDetails] = useState({});
+	const [virtualAccount, setVirtualAccount] = useState({});
 
 	useEffect(() => {
 		(async function getProfile() {
@@ -59,6 +60,9 @@ function Home(props) {
 			setTransactions(profile.data.transactions.reverse());
 			setQrCodeDetails(profile.data.qrcode);
 			setAccountDetails(profile.data.account ? profile.data.account : {});
+			setVirtualAccount(
+				profile.virtual_account ? profile.data.virtual_account : {}
+			);
 		})();
 
 		// fetch profile details
@@ -109,6 +113,8 @@ function Home(props) {
 									updateAccountDetails={setAccountDetails}
 									qrcode={qrCodeDetails}
 									banks={[]}
+									virtualAccount={virtualAccount}
+									setVirtualAccount={setVirtualAccount}
 								/>
 
 								<Transactions

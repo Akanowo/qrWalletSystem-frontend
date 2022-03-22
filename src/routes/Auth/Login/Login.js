@@ -3,7 +3,7 @@ import axios from '../../../constants/axiosInstance';
 import { toast } from 'react-toastify';
 import Loader from '../../../components/Loader/Loader';
 import { Link, Navigate as Redirect } from 'react-router-dom';
-import AddToHomeScreen from '../../../constants/AddToHomeScreen/AddToHomeScreen';
+import AddToHomeScreen from '../../../containers/AddToHomeScreen/AddToHomeScreen';
 
 function Login() {
 	const [email, setEmail] = useState('');

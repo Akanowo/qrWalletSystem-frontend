@@ -74,7 +74,13 @@ function Settings(props) {
 					</li>
 				</ul>
 			</div>
-			<ActionSheets banks={banks} />
+			<ActionSheets
+				accountDetails={{}}
+				setIsLoading={false}
+				qrcode={{}}
+				banks={[]}
+				virtualAccount={{}}
+			/>
 		</>
 	);
 }

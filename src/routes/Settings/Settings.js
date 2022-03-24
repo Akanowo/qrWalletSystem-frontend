@@ -78,7 +78,7 @@ function Settings(props) {
 				accountDetails={{}}
 				setIsLoading={false}
 				qrcode={{}}
-				banks={[]}
+				banks={banks}
 				virtualAccount={{}}
 			/>
 		</>

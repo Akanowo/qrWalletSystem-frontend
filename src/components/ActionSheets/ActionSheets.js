@@ -971,7 +971,7 @@ function ActionSheets(props) {
 						</div>
 						<div className="modal-body">
 							<div className="action-sheet-content">
-								{isLoading ? (
+								{props.banks.length === 0 ? (
 									<InfinitySpin color="#000" />
 								) : (
 									<>

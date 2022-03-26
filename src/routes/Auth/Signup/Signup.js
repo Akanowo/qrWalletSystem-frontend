@@ -25,7 +25,7 @@ function Signup() {
 		const data = {
 			firstName,
 			lastName,
-			email,
+			email: email.trim().toLowerCase(),
 			password,
 			vendorName: type === 'vendor' ? undefined : vendorName,
 			type,

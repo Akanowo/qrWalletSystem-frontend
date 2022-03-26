@@ -15,11 +15,9 @@ function Login() {
 		e.preventDefault();
 		setIsLoading(true);
 		const data = {
-			email,
-			password,
+			email: email.trim().toLowerCase(),
+			password: password.trim(),
 		};
-
-		console.log(data);
 
 		let response;
 		try {

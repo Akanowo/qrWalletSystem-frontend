@@ -14,6 +14,7 @@ import AddToHomeScreen from '../../containers/AddToHomeScreen/AddToHomeScreen';
 function Home(props) {
 	console.log(props);
 
+	const [token, setToken] = useState(localStorage.getItem('token'));
 	const [userDetails, setUserDetails] = useState({});
 	const [walletDetails, setWalletDetails] = useState({});
 	const [transactions, setTransactions] = useState([]);
@@ -25,28 +26,28 @@ function Home(props) {
 	const [virtualAccount, setVirtualAccount] = useState({});
 
 	useEffect(() => {
+		if (!token) {
+			return setRedirect('/login');
+		}
+
 		(async function getProfile() {
 			let profile;
 			setIsLoading(true);
 			try {
-				profile = await (await axios.get('/auth/profile')).data;
+				const config = {
+					headers: {
+						authorization: `Bearer ${token}`,
+					},
+				};
+				profile = await (await axios.get('/auth/profile', config)).data;
 			} catch (error) {
 				setIsLoading(false);
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							// toast(error.response.data.error, {
-							// 	type: 'error',
-							// 	position: 'top-center',
-							// });
 							return setRedirect('/login');
 
 						default:
-							// toast(error.response.data.error || 'An error occured', {
-							// 	type: 'error',
-							// 	position: 'top-center',
-							// 	theme: 'colored',
-							// });
 							return setRedirect('/login');
 					}
 				}

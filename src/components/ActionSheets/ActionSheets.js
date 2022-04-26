@@ -36,6 +36,7 @@ let $;
 function ActionSheets(props) {
 	const history = useNavigate();
 
+	const [token, setToken] = useState(localStorage.getItem('token'));
 	const [isLoading, setIsLoading] = useState(false);
 	const [fields, setFields] = useState(defaultFields);
 	const [mode, setMode] = useState('');
@@ -79,6 +80,12 @@ function ActionSheets(props) {
 	const [phone_number, setPhoneNumber] = useState('');
 	const [bvn, setBvn] = useState('');
 
+	const config = {
+		headers: {
+			authorization: `Bearer ${token}`,
+		},
+	};
+
 	useEffect(() => {
 		$ = window.$;
 	}, []);
@@ -106,7 +113,7 @@ function ActionSheets(props) {
 
 		let response;
 		try {
-			response = await (await axios.post('/account/update', data)).data;
+			response = await (await axios.post('/account/update', data, config)).data;
 		} catch (error) {
 			setIsLoading(false);
 			setHidden(true);
@@ -205,7 +212,7 @@ function ActionSheets(props) {
 
 		let response;
 		try {
-			response = await (await axios.post(endpoint, data)).data;
+			response = await (await axios.post(endpoint, data, config)).data;
 		} catch (error) {
 			setIsLoading(false);
 			if (error.response && error.response.data) {
@@ -635,16 +642,6 @@ function ActionSheets(props) {
 		$(`#setAccountActionSheet`).modal('hide');
 	};
 
-	const fetchTransferDetails = async () => {
-		setIsLoading(true);
-
-		let response;
-
-		try {
-			response = await axios.post();
-		} catch (error) {}
-	};
-
 	const handleFetchUSSDcode = async (code) => {
 		setIsLoading(true);
 		const data = {
@@ -654,7 +651,9 @@ function ActionSheets(props) {
 
 		let response;
 		try {
-			response = await (await axios.post('/payment/topup/ussd', data)).data;
+			response = await (
+				await axios.post('/payment/topup/ussd', data, config)
+			).data;
 		} catch (error) {
 			setIsLoading(false);
 			if (error.response && error.response.data) {
@@ -699,7 +698,9 @@ function ActionSheets(props) {
 				bvn,
 			};
 
-			response = await (await axios.post('/payment/generate-vacc', data)).data;
+			response = await (
+				await axios.post('/payment/generate-vacc', data, config)
+			).data;
 		} catch (error) {
 			setIsLoading(false);
 			if (error.response && error.response.data) {

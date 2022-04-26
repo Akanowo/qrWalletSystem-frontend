@@ -11,6 +11,7 @@ function TransactionDetails() {
 	const { id } = useParams();
 	const history = useNavigate();
 
+	const [token] = useState(localStorage.getItem('token'));
 	const [isLoading, setIsLoading] = useState(false);
 	const [transaction, setTransaction] = useState({});
 
@@ -20,7 +21,12 @@ function TransactionDetails() {
 			let response;
 
 			try {
-				response = await (await axios.get(`/transactions/${id}`)).data;
+				const config = {
+					headers: {
+						authorization: `Bearer ${token}`,
+					},
+				};
+				response = await (await axios.get(`/transactions/${id}`, config)).data;
 			} catch (error) {
 				setIsLoading(false);
 				if (error.response) {
@@ -48,7 +54,7 @@ function TransactionDetails() {
 					<>
 						<li>
 							<strong>Amount</strong>
-							<span>{transaction.amount_settled}</span>
+							<span>{transaction.amount - transaction.app_fee}</span>
 						</li>
 
 						<li>
@@ -76,7 +82,7 @@ function TransactionDetails() {
 					<>
 						<li>
 							<strong>Amount</strong>
-							<span>{transaction.amount}</span>
+							<span>{transaction.amount - transaction.app_fee}</span>
 						</li>
 						<li>
 							<strong>Currency</strong>

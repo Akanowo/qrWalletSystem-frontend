@@ -48,11 +48,7 @@ function Login() {
 		setIsLoading(false);
 
 		console.log(response);
-		localStorage.setItem('user', JSON.stringify(response.data.data.user));
-		localStorage.setItem(
-			'walletDetails',
-			JSON.stringify(response.data.data.walletDetails)
-		);
+		localStorage.setItem('token', response.data.data.access_token);
 
 		setRedirect('/home');
 	};

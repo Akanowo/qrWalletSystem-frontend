@@ -5,6 +5,7 @@ import Header from '../../components/Header/Header';
 import axios from '../../constants/axiosInstance';
 
 function Settings(props) {
+	const [token, setToken] = useState(localStorage.getItem('token'));
 	const [banks, setBanks] = useState([]);
 
 	const fetchBanks = async (e) => {
@@ -12,7 +13,12 @@ function Settings(props) {
 		let response;
 
 		try {
-			response = await axios.get('/account/getbanks');
+			const config = {
+				headers: {
+					authorization: `Bearer ${token}`,
+				},
+			};
+			response = await axios.get('/account/getbanks', config);
 		} catch (error) {
 			console.log(error);
 		}

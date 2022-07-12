@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 function QrCodeScanner(props) {
 	let html5QrcodeScanner;
-	const onScanSuccess = (decodedText, decodedResult) => {
+	const onScanSuccess = async (decodedText, decodedResult) => {
 		// handle the scanned code as you like, for example:
 		console.log(`Code matched = ${decodedText}`, decodedResult);
 
@@ -51,12 +51,12 @@ function QrCodeScanner(props) {
 					position: 'top-center',
 					theme: 'colored',
 				});
-				html5QrcodeScanner.stop();
-				props.resetStates();
-				props.updateTransactions(response.data.transaction);
-				props.updateWalletBalance(response.data.balance);
-				props.closeModal();
-				return;
+				// html5QrcodeScanner.stop();
+				// props.resetStates();
+				// props.updateTransactions(response.data.transaction);
+				// props.updateWalletBalance(response.data.balance);
+				// props.closeModal();
+				return window.location.reload();
 			}
 
 			toast('An error occured', {

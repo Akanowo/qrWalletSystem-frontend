@@ -42,7 +42,7 @@ function Signup() {
 			lastName,
 			email: email.trim().toLowerCase(),
 			password,
-			vendorName: type === 'vendor' ? undefined : vendorName,
+			vendorName: type === 'vendor' ? vendorName : undefined,
 			type,
 		};
 

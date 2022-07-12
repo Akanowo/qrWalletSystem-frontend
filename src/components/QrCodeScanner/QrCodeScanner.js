@@ -23,7 +23,15 @@ function QrCodeScanner(props) {
 
 			let response;
 			try {
-				response = await (await axios.post('/payment/transfer', data)).data;
+				const token = localStorage.getItem('token');
+				const config = {
+					headers: {
+						authorization: 'Bearer ' + token,
+					},
+				};
+				response = await (
+					await axios.post('/payment/transfer', data, config)
+				).data;
 			} catch (error) {
 				props.setIsLoading(false);
 				if (error.response && error.response.data) {
@@ -43,6 +51,7 @@ function QrCodeScanner(props) {
 					position: 'top-center',
 					theme: 'colored',
 				});
+				html5QrcodeScanner.stop();
 				props.resetStates();
 				props.updateTransactions(response.data.transaction);
 				props.updateWalletBalance(response.data.balance);

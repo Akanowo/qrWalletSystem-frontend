@@ -44,7 +44,7 @@ function ActionSheets(props) {
 	const [expiry_month, setExpiryMonth] = useState('');
 	const [expiry_year, setExpiryYear] = useState('');
 	const [cvv, setCvv] = useState('');
-	const [amount, setAmount] = useState(0);
+	const [amount, setAmount] = useState();
 	const [pin, setPin] = useState('');
 	const [otp, setOtp] = useState('');
 	const [address, setAddress] = useState('');

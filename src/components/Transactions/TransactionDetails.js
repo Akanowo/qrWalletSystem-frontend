@@ -82,7 +82,7 @@ function TransactionDetails() {
 					<>
 						<li>
 							<strong>Amount</strong>
-							<span>{transaction.amount - transaction.app_fee}</span>
+							<span>{transaction.amount}</span>
 						</li>
 						<li>
 							<strong>Currency</strong>
@@ -126,11 +126,11 @@ function TransactionDetails() {
 					<div id="appCapsule" className="full-height">
 						<div className="section mt-2 mb-2">
 							<div className="listed-detail mt-3">
-								<div className="icon-wrapper">
+								{/* <div className="icon-wrapper">
 									<div className="iconbox">
 										<ArrowForwardOutline />
 									</div>
-								</div>
+								</div> */}
 								<h3 className="text-center mt-2 capitalize">
 									{transaction.type}
 									<br />
